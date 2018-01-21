@@ -1,0 +1,169 @@
+<head>
+  <title>swarmed</title>
+</head>
+
+<body>
+  <!--<h1>Welcome to Meteor!</h1>-->
+  {{> dapp}}
+  <!--{{> hello}}-->
+  <!--{{> info}}-->
+</body>
+
+<template name="dapp">
+<!-- ================= HEADER ================= -->
+<div id="header">
+  <div id='intervalErrorMessage'></div>
+  <h1>Contract management DApp</h1>
+  <!--[<a id="helpLink" title="Show more information" href="#">Help</a>]<br />-->
+  <div id="info" style="display: none;">
+    This proof of concept Signature Storage Ethereum Dapp uses the <a href="https://www.mobilefish.com/download/ethereum/SignatureStorage.sol.txt">SignatureStorage.sol</a> contract.
+    <br /><br />
+    <u>Problem Description:</u><br />
+    It costs companies a lot of time and money to send paper contracts by postal service to customers (signees) for signing in order to close a deal.<br />
+    Each customer also needs a copy of this contract, with all the signatures.
+    <br /><br />
+    This Dapp will offer a cheaper and faster solution to this problem.
+    <br /><br />
+    <u>How to use this Dapp:</u>
+    <ol>
+	<li><b>Prerequisites:</b><br />
+		<ul>
+			<li>The owner and signees must have MetaMask installed.</li>
+			<li>The owner and signees Ethereum addresses must have enough ethers assigned to them.</li>
+			<li>The owner and signees must connect to the correct network. In this example Rinkeby test network.</li>
+		</ul>
+	</li>
+    <li>The Dapp owner first creates a <a href="https://www.mobilefish.com/download/ethereum/ACMEContract.pdf">contract (Word, PDF, etc)</a> containing a unique contract number.</li>
+    <li>The contract should at least contain:
+		<ul>
+			<li>The signee names and their corresponding Ethereum addresses, the signees have sends this information earlier to the owner.<br />
+				For privacy reasons it is recommended that the signee uses a different Ethereum address each time a contract needs to be signed.
+			</li>
+			<li>The contract also contains the deployed solidity contract address, in case a signee wants to verify the solidity contract.</li>
+		</ul>
+	</li>
+    <li>The owner selects the action: "Add contract".
+		<ul>
+			<li>Owner enters the unique contract number.</li>
+			<li>Owner uploads the document to calculate the sha-256 hash.</li>
+		</ul>
+	</li>
+	<li>The owner selects the action: "Delete contract". <br />
+		The owner can only delete contracts with no signees assigned.
+	</li>
+	<li>The owner selects the action: "Add signees".
+		<ul>
+			<li>Owner selects the contract number.</li>
+			<li>In the textbox the owner enters all signees Ethereum addresses.<br />
+				Each address should be on a separate line.
+			</li>
+			<li>After the button "Add signees" is pressed, the owner can not delete the contract or modify the signees.</li>
+		</ul>
+	</li>
+	<li>The owner sends the contract (Word, PDF, etc) per email to the signees, and the URL where they can sign the contract with their Ethereum address.
+	</li>
+	<li>To sign the contract, the signee must use its correct Ethereum address in MetaMask.<br />
+		The signee selects the action: "Sign contract".<br />
+		<ul>
+			<li>Signee selects the contract number.</li>
+			<li>After the button "Sign contract" is pressed, the signee can not change it.</li>
+		</ul>
+	</li>
+	<li>To show the contract information, the owner or signee selects the action: "Show contract information".
+		<ul>
+			<li>Owner or signee selects the contract number and presses the "Show information" button.</li>
+			<li>The contract can be in one of the following statusses:
+				<ul>
+					<li>Created - Contract is created with no signees assigned.</li>
+					<li>Activated - Contract has signees assigned and not all signees have signed the contract.</li>
+					<li>Completed - All signees have signed the contract.</li>
+				</ul>
+			</li>
+			<li>The contract information is displayed on the right side.</li>
+		</ul>
+	</li>
+	<li>To transfer ownership, the owner selects the action: "Transfer ownership".
+		<ul>
+			<li>The owner enters a new owner address and presses the "Transfer ownership" button.</li>
+			<li>After the transaction is processed, the new current owner address is displayed.</li>
+		</ul>
+	</li>
+    </ol>
+  </div>
+</div>
+<!-- ================= END OF HEADER ================= -->
+
+<!-- ================= HEADER2 ================= -->
+<div id="header2">
+  Action:
+  <select id="actionType">
+    <!--<option value="uploadDataToSwarm">Upload Data to Swarm</option>-->
+    <option value="addContract">Add contract</option>
+    <option value="deleteContract">Delete contract</option>
+    <option value="addSignees">Add signees</option>
+    <option value="signContract">Sign contract</option>
+    <option value="showContractInformation">Show contract status</option>
+    <option value="transferOwnership">Transfer ownership</option>
+    <!--<option value="DownloadDataFromSwarm">Download Data from Swarm</option>-->
+  </select>
+</div>
+<!-- ================= END OF HEADER2 ================= -->
+
+<!-- ================= CONTENT ================= -->
+<div id="content">
+  <!-- ================= LEFT ================= -->
+  <div id="left">
+    <div id="actionContent"></div>
+    <br /><br />
+  </div>
+  <!-- ================= END OF LEFT ================= -->
+
+  <!-- ================= RIGHT ================= -->
+  <div id="right">
+    <div id='network'></div>
+    My current address: <br />
+    <input id='fromAddress' placeholder='from address'>
+
+    <div id='contractInformation'></div>
+    <div id='dataLocation'>
+      <p id='pDataLocation'>
+        Data link will appear only after signed by all <br />
+        <input type='text' id='txtSwarmHash' placeholder='0x'>
+        <button id='btnGetData'>Show data</button>
+        <textarea id='textAreaData' rows='4' cols='20' placeholder='data will be displayed here'></textarea>
+      </p>
+    </div>
+  </div>
+  <!-- ================= END OF RIGHT ================= -->
+
+  <!-- ================= CLEAR ================= -->
+  <div class="clear"></div>
+  <!-- ================= END OF CLEAR ================= -->
+  
+</div>
+<!-- ================= END OF CONTENT ================= -->
+
+<!-- ================= FOOTER ================= -->
+<div id="footer">
+  <div id='result'></div>
+  <div id='wait'></div>
+  <div id='log'></div>
+</div>
+
+
+</template>
+
+<template name="hello">
+  <button>Click Me</button>
+  <p>You've pressed the button {{counter}} times.</p>
+</template>
+
+<template name="info">
+  <h2>Learn Meteor!</h2>
+  <ul>
+    <li><a href="https://www.meteor.com/try" target="_blank">Do the Tutorial</a></li>
+    <li><a href="http://guide.meteor.com" target="_blank">Follow the Guide</a></li>
+    <li><a href="https://docs.meteor.com" target="_blank">Read the Docs</a></li>
+    <li><a href="https://forums.meteor.com" target="_blank">Discussions</a></li>
+  </ul>
+</template>
